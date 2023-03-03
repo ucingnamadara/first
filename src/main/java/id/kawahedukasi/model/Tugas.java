@@ -8,7 +8,9 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "tugas")
+@Table(name = "tugas", indexes = {
+        @Index(name = "idx_tugas_peserta_id", columnList = "peserta_id")
+})
 public class Tugas extends PanacheEntityBase {
 
     @Id

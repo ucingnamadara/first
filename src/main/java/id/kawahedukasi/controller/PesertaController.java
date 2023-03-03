@@ -1,12 +1,12 @@
 package id.kawahedukasi.controller;
 
-import id.kawahedukasi.model.Peserta;
+import id.kawahedukasi.service.PesertaService;
 
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
 import java.util.Map;
 
 @Path("/peserta")
@@ -14,55 +14,29 @@ import java.util.Map;
 @Consumes(MediaType.APPLICATION_JSON)
 public class PesertaController {
 
-    //list all data peserta database
+    @Inject
+    PesertaService pesertaService;
+
     @GET
-    public Response get(){
-        return Response.status(Response.Status.OK).entity(Peserta.findAll().list()).build();
+    public Response get() {
+        return pesertaService.get();
     }
 
     @POST
-    @Transactional
     public Response post(Map<String, Object> request){
-        Peserta peserta = new Peserta();
-        peserta.name = request.get("name").toString();
-        peserta.email = request.get("email").toString();
-        peserta.phoneNumber = request.get("phoneNumber").toString();
-
-        //save to database
-        peserta.persist();
-
-        return Response.status(Response.Status.CREATED).entity(new HashMap<>()).build();
+        return pesertaService.post(request);
     }
 
     @PUT
     @Path("/{id}")
-    @Transactional
     public Response put(@PathParam("id") Long id, Map<String, Object> request){
-        Peserta peserta = Peserta.findById(id);
-        if(peserta == null){
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        peserta.name = request.get("name").toString();
-        peserta.email = request.get("email").toString();
-        peserta.phoneNumber = request.get("phoneNumber").toString();
-
-        //save to database
-        peserta.persist();
-
-        return Response.status(Response.Status.CREATED).entity(new HashMap<>()).build();
+        return pesertaService.put(id, request);
     }
 
     @DELETE
     @Path("/{id}")
     @Transactional
-    public Response delete(@PathParam("id") Long id, Map<String, Object> request){
-        Peserta peserta = Peserta.findById(id);
-        if(peserta == null){
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
-        //save to database
-        peserta.delete();
-
-        return Response.status(Response.Status.OK).entity(new HashMap<>()).build();
+    public Response delete(@PathParam("id") Long id){
+        return pesertaService.delete(id);
     }
 }
