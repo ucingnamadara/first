@@ -1,6 +1,8 @@
 package id.kawahedukasi.controller;
 
+import id.kawahedukasi.service.ExportService;
 import id.kawahedukasi.service.PesertaService;
+import net.sf.jasperreports.engine.JRException;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -17,9 +19,19 @@ public class PesertaController {
     @Inject
     PesertaService pesertaService;
 
+    @Inject
+    ExportService exportService;
+
     @GET
     public Response get() {
         return pesertaService.get();
+    }
+
+    @GET
+    @Path("/export")
+    @Produces("application/pdf")
+    public Response export() throws JRException {
+        return exportService.exportPeserta();
     }
 
     @POST
