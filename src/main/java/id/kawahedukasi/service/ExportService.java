@@ -10,10 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +44,17 @@ public class ExportService {
     }
     public Response exportExcelPeserta() throws IOException {
 
+        ByteArrayOutputStream outputStream = excelPeserta();
+
+//        Content-Disposition: attachment; filename="name_of_excel_file.xls"
+        return Response.ok()
+                .type("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .header("Content-Disposition", "attachment; filename=\"peserta_list_excel.xlsx\"")
+                .entity(outputStream.toByteArray()).build();
+
+    }
+
+    public ByteArrayOutputStream excelPeserta() throws IOException {
         //get all data peserta
         List<Peserta> pesertaList = Peserta.listAll();
 
@@ -78,13 +86,7 @@ public class ExportService {
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         workbook.write(outputStream);
-
-//        Content-Disposition: attachment; filename="name_of_excel_file.xls"
-        return Response.ok()
-                .type("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                .header("Content-Disposition", "attachment; filename=\"peserta_list_excel.xlsx\"")
-                .entity(outputStream.toByteArray()).build();
-
+        return outputStream;
     }
 
     public Response exportCsvPeserta() throws IOException {
